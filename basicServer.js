@@ -61,7 +61,7 @@ app.post('/message', function(req,res){
   */
 });
 
-app.listen(3000, '127.0.0.1', function(){
+app.listen(3000, '49.236.137.57', function(){
   console.log('Connect 3000 port!')
 });
 
