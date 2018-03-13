@@ -1,67 +1,65 @@
-// a simple node app for kakao api
-var express = require('express');
-var app = express();
+var express    = require('express');
+var app        = express();
+// Dialogflow api 연결
+var apiai = require('apiai');
+// Dialogflow Agent token key 
+var app_ai = apiai("83044ded0d854b77a053ac4bb2653138");
 var bodyParser = require('body-parser');
-
+// parse application/json
 app.use(bodyParser.json());
+// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.get('/', function(req, res){
-//     let msg = {
-//         "message":"plz"
-//     }
-//     res.send(msg)
-// })
-app.get('/keyboard', (req, res) => {
-    let keyboard = {
-        "type": "text"
-    }
-    res.set({
-        'Content-Type': 'application/json; charset=utf-8'
-    }).send(JSON.stringify(keyboard));
-  });
 
-app.post('/message', function(req,res){
-  let user_key = decodeURIComponent(req.body.user_key); // user's key
-  let type = decodeURIComponent(req.body.type); // message type
-  let content = decodeURIComponent(req.body.content); // user's message
-  console.log(user_key);
-  console.log(type);
-  console.log(content);
+//초기 상태 get
+app.get('/keyboard', function(req, res){
+  const menu = {
+      "type": 'text'
+  };
 
-  let answer = {
-    "message":{
-      "text":"your message is arrieved server : "+content // in case 'text'
-    }
-  }
-  res.send(answer);
-  /*
-  answer can use 
-  {
-    "message": {
-      "text": "귀하의 차량이 성공적으로 등록되었습니다. 축하합니다!",
-      "photo": {
-        "url": "https://photo.src",
-        "width": 640,
-        "height": 480
-      },
-      "message_button": {
-        "label": "주유 쿠폰받기",
-        "url": "https://coupon/url"
+  res.set({
+      'content-type': 'application/json'
+  }).send(JSON.stringify(menu));
+});
+
+//카톡 메시지 처리
+app.post('/message',function (req, res) {
+
+    const _obj = {
+        user_key: req.body.user_key,
+        type: req.body.type,
+        content: req.body.content
+    };
+    // 카톡 채팅 입력 내용 출력
+    console.log(_obj.content)
+    // 카톡으로 받은 입력 내용을 Dialogflow API 를 통해 전달
+    var request = app_ai.textRequest(_obj.content, {
+        sessionId: user_key
+    });
+    
+    request.on('response', function(response) {
+    console.log(response);
+    // Dialogflow 의 자연어 처리 답변을 카카오톡 답변 message 로 생성
+    let massage = {
+      "message": {
+          "text": response.result.fulfillment.speech
       }
-    },
-    "keyboard": {
-      "type": "buttons",
-      "buttons": [
-        "처음으로",
-        "다시 등록하기",
-        "취소하기"
-      ]
-    }
-  }
-  */
+     //카톡으로 전송
+     };
+      res.set({
+          'content-type': 'application/json'
+      }).send(JSON.stringify(massage));
+
+    });
+
+    request.on('error', function(error) {
+        console.log(error);
+    });
+
+    request.end();
+
 });
 
-app.listen(3000, function(){
-  console.log('Connect 3000 port!')
+//4000포트 서버 ON
+app.listen(4000, function() {
+    console.log("4000포트 입장");
 });
-
