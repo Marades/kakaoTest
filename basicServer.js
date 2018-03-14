@@ -60,6 +60,6 @@ app.post('/message',function (req, res) {
 });
 
 //4000포트 서버 ON
-app.listen(4000, function() {
-    console.log("4000포트 입장");
+app.listen(3000, function() {
+    console.log("3000포트 입장");
 });
