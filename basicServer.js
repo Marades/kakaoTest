@@ -33,7 +33,7 @@ app.post('/message',function (req, res) {
     console.log(_obj.content)
     // 카톡으로 받은 입력 내용을 Dialogflow API 를 통해 전달
     var request = app_ai.textRequest(_obj.content, {
-        sessionId: user_key
+        sessionId: _obj.user_key
     });
     
     request.on('response', function(response) {
