@@ -3,7 +3,7 @@ var app        = express();
 // Dialogflow api 연결
 var apiai = require('apiai');
 // Dialogflow Agent token key 
-var app_ai = apiai("83044ded0d854b77a053ac4bb2653138");
+var app_ai = apiai("f35122caf38b4b01a2fb5b1f470be753");
 var bodyParser = require('body-parser');
 // parse application/json
 app.use(bodyParser.json());
